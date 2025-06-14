@@ -11,6 +11,6 @@
     "deploy": "turbo run deploy --filter=@scout/dashboard"
   },
   "devDependencies": {
-    "turbo": "^1.13.2"
+    "turbo": "^2.5.4"
   }
 }
