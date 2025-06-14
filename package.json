@@ -1,0 +1,16 @@
+{
+  "name": "scout-analytics-prod",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "deploy": "turbo run deploy --filter=@scout/dashboard"
+  },
+  "devDependencies": {
+    "turbo": "^1.13.2"
+  }
+}

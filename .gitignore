@@ -1,0 +1,25 @@
+# Environment
+.env
+*.env.local
+
+# Build artifacts
+dist/
+build/
+node_modules/
+
+# Secrets
+**/secrets/*
+**/*.key
+**/*.pem
+
+# Editor files
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Temp files
+*.tmp
+*.temp

@@ -1,0 +1,404 @@
+# ===========================================================
+# 📊 Scout Analytics - Azure Integrated Production End State
+# ✅ Azure PostgreSQL + ADLS2 + OpenAI | Vercel Frontend
+# ===========================================================
+
+# Streamlined 4-Page Overview with AI Integration
+version: 2.5
+effective_date: 2025-06-15
+environment: production
+region: ph
+
+# Core Pages
+pages:
+  - id: overview
+    title: Executive Dashboard
+    icon: 📊
+    path: "/"
+    components:
+      - kpi_total_revenue
+      - kpi_transactions
+      - kpi_aov
+      - kpi_units_sold
+      - chart_revenue_trend_30d
+      - chart_category_performance
+      - panel_ai_insights
+      - panel_scout_ai_chat
+
+  - id: trends
+    title: Market Trends
+    icon: 📈
+    path: "/trends"
+    components:
+      - chart_hourly_distribution
+      - chart_day_of_week
+      - chart_regional_performance
+      - card_trend_key_insights
+      - panel_scout_ai_chat
+
+  - id: products
+    title: Product Intelligence
+    icon: 🧺
+    path: "/products"
+    components:
+      - chart_brand_performance
+      - table_top_products
+      - card_product_key_insights
+      - panel_product_recommendations
+      - panel_scout_ai_chat
+
+  - id: consumers
+    title: Consumer Insights
+    icon: 👥
+    path: "/consumers"
+    components:
+      - donut_age_distribution
+      - donut_gender_distribution
+      - bar_income_bracket
+      - table_customer_segments
+      - card_consumer_key_insights
+      - panel_scout_ai_chat
+
+# AI Integration Components
+components:
+  - id: panel_scout_ai_chat
+    type: chat_panel
+    title: "Scout AI Retail Assistant"
+    props:
+      position: bottom-right
+      expandable: true
+      default_open: false
+      avatar: "/assets/ai-cookie.svg"
+      api_endpoint: "/api/ai/retail-assistant"
+    layout:
+      persistent: true
+      on_all_pages: true
+
+  - id: panel_ai_insights
+    type: insight_card
+    title: "AI-Generated Insights"
+    props:
+      refresh_interval: 15m
+      max_insights: 3
+      sources:
+        - revenue_trends
+        - category_performance
+        - regional_variance
+
+# Core KPI Components (Selected)
+kpis:
+  - id: kpi_total_revenue
+    title: Total Revenue
+    format: "₱0,0.00"
+    query: "SELECT SUM(total_amount) FROM transactions_fmcg WHERE {{ global_filters }}"
+
+  - id: kpi_transactions
+    title: Transactions
+    format: "0,0"
+    query: "SELECT COUNT(*) FROM transactions_fmcg WHERE {{ global_filters }}"
+
+  - id: kpi_aov
+    title: Avg Order Value
+    format: "₱0,0.00"
+    query: "SELECT AVG(total_amount) FROM transactions_fmcg WHERE {{ global_filters }}"
+
+  - id: kpi_units_sold
+    title: Units Sold
+    format: "0,0"
+    query: "SELECT SUM(quantity) FROM transaction_items_fmcg WHERE {{ global_filters }}"
+
+# Critical Charts (Selected)
+charts:
+  - id: chart_revenue_trend_30d
+    title: "30-Day Revenue Trend"
+    type: line
+    query: |
+      SELECT DATE(transaction_date) AS date,
+             SUM(total_amount) AS revenue
+      FROM transactions_fmcg
+      WHERE transaction_date >= NOW() - INTERVAL '30 day'
+      GROUP BY 1 ORDER BY 1
+
+  - id: chart_category_performance
+    title: "Category Performance"
+    type: bar
+    query: |
+      SELECT p.category, SUM(ti.total_price) AS revenue
+      FROM transaction_items_fmcg ti
+      JOIN products p ON ti.product_id = p.id
+      GROUP BY 1 ORDER BY revenue DESC LIMIT 10
+
+  - id: chart_brand_performance
+    title: "Brand Performance"
+    type: horizontal_bar
+    query: |
+      SELECT b.name, SUM(ti.total_price) AS revenue
+      FROM transaction_items_fmcg ti
+      JOIN products p ON ti.product_id = p.id
+      JOIN brands b ON p.brand_id = b.id
+      GROUP BY 1 ORDER BY revenue DESC LIMIT 8
+
+# Philippines Focus
+ph_specific:
+  currency: PHP
+  timezone: Asia/Manila
+  localization:
+    unbranded_terms:
+      yelo: ice
+      asin: salt
+      tingi: sachet
+    measurements:
+      - unit: pcs
+        conversion: 1
+      - unit: pack
+        conversion: 10
+
+# AI Configuration
+ai_integration:
+  retail_assistant:
+    model: gpt-4-turbo
+    context_strategy:
+      - current_filters
+      - active_page
+      - recent_insights
+    capabilities:
+      - data_query
+      - trend_analysis
+      - anomaly_detection
+      - recommendation_generation
+    ph_specialization:
+      tagalog_support: true
+      local_term_mapping: true
+      regional_dynamics: true
+
+# Data Essentials
+data_sources:
+  primary: azure_postgresql
+  fmcg_tables:
+    - transactions_fmcg
+    - transaction_items_fmcg
+    - products
+    - brands
+    - stores
+
+dashboard:
+  id: scout-analytics-azure
+  version: 2.1.0
+  mode: production
+  title: Retail Intelligence – Azure Edition
+  subtitle: FMCG Analytics with Azure Integration
+  theme: tbwa-azure
+  data_sources:
+    - azure_postgresql
+    - adls2
+    - azure_openai
+    - vercel
+
+meta:
+  last_updated: 2025-06-18T08:30:00+08:00
+  deployed_by: azure-devops
+  service_integration: 
+    - azure_postgresql@supabase-compatible
+    - adls2://scoutdatalake
+    - azure_openai@gpt-4-turbo
+  deployment:
+    url: "https://scout.tbwa-digital.com"
+    platform: vercel
+    build_cmd: "npm run build:azure"
+    deploy_cmd: "vercel --prod --yes"
+    commit_hash: "a1b2c3d4"
+    infra_provider: azure
+
+data_sources:
+  - azure_postgresql[transactions_fmcg]
+  - azure_postgresql[products]
+  - adls2[exports]
+  - adls2[ai_datasets]
+  - azure_openai[gpt-4-turbo]
+
+layout:
+  navigation: side
+  header: sticky
+  filters:
+    orientation: horizontal
+    type: oidc_secured
+    azure_integration: 
+      use_oidc: true
+      vercel_issuer: "https://oidc.vercel.com/team_tbwa"
+
+# -----------------------------------------------------------
+# ENHANCED AZURE FILTER SYSTEM
+# -----------------------------------------------------------
+filters_schema:
+  date_range: { from: date|null, to: date|null }
+  regions: string[]
+  categories: string[]
+  brands: string[]
+
+filter_components:
+  - id: azure_oidc_filter
+    type: secure_filter_bar
+    title: "Azure-Connected Filters"
+    azure:
+      use_managed_identity: true
+      keyvault_name: "scout-kv-prod"
+      required_secrets:
+        - "supabase-url"
+        - "adls-access-key"
+
+# -----------------------------------------------------------
+# AI INTEGRATION CONFIGURATION
+# -----------------------------------------------------------
+ai_config:
+  azure_openai:
+    endpoint: "https://scout.openai.azure.com/"
+    deployment: "gpt-4-turbo"
+    temperature: 0.7
+    max_tokens: 2000
+    cache_strategy: adls2
+    cache_container: "ai-responses"
+    
+  data_context:
+    - source: adls2
+      path: "analytics/datasets"
+    - source: azure_postgresql
+      table: "product_insights"
+
+# -----------------------------------------------------------
+# ADLS2 DATA PIPELINE CONFIG
+# -----------------------------------------------------------
+data_pipelines:
+  - name: nightly_export
+    schedule: "0 2 * * *"  # Daily at 2 AM
+    steps:
+      1: 
+        type: postgres_to_adls
+        query: "SELECT * FROM transactions_fmcg"
+        format: parquet
+        adls_path: "exports/transactions"
+      2:
+        type: ai_enhancement
+        model: gpt-4-turbo
+        prompt: "Analyze transaction patterns and generate market insights"
+        output_path: "ai_insights/daily_report"
+        
+  - name: real_time_stream
+    type: kafka_to_adls
+    topic: "live-transactions"
+    adls_path: "streaming/transactions"
+    format: json
+    checkpoint_interval: 5m
+
+# -----------------------------------------------------------
+# VERCEL DEPLOYMENT OPTIMIZATIONS
+# -----------------------------------------------------------
+vercel:
+  edge_config:
+    regions: sin1, hkg1  # Southeast Asia
+    ai_cache: 
+      enabled: true
+      strategy: stale-while-revalidate
+      max_age: 3600
+    supabase_connection:
+      mode: supavisor
+      port: 6543  # Transaction mode for serverless
+      
+  environment:
+    - name: AZURE_POSTGRES_URL
+      value: "@azure-postgres-conn"
+      comment: "From Azure Key Vault"
+    - name: ADLS_ACCESS_KEY
+      value: "@adls-access-key"
+      comment: "RBAC via OIDC"
+    - name: AZURE_OPENAI_KEY
+      value: "@azure-openai-key"
+      secret: true
+
+# -----------------------------------------------------------
+# AZURE SECURITY CONFIGURATION
+# -----------------------------------------------------------
+security:
+  azure:
+    keyvault: scout-kv-prod
+    managed_identity: scout-identity
+    rbac_roles:
+      - scope: adls2
+        role: Storage Blob Data Contributor
+      - scope: azure_postgresql
+        role: db_datareader
+        
+  vercel_oidc:
+    issuer: "https://oidc.vercel.com/team_tbwa"
+    audience: "api://AzureADTokenExchange"
+    subject: "owner:team_tbwa:project:scout-analytics:environment:production"
+
+# -----------------------------------------------------------
+# REVISED COMPONENT DEFINITIONS (Azure-optimized)
+# -----------------------------------------------------------
+components:
+  - id: chart_revenue_trend_30d
+    type: chart
+    title: "Azure-hosted Revenue Trend"
+    query: |
+      SELECT DATE(transaction_date) AS date,
+             SUM(total_amount) AS value
+      FROM   transactions_fmcg
+      WHERE  {{ azure_filters }}
+      GROUP BY 1 ORDER BY 1;
+    cache: adls2://cache/revenue_trend
+
+  - id: ai_insights_panel
+    type: insight_card
+    datasource: azure_openai
+    props:
+      prompt_template: |
+        "Using ADLS2 dataset at {{ adls_path }}/market_data.parquet
+         Generate insights about {{ selected_brand }} performance"
+      cache_strategy: adls2
+      cache_ttl: 86400  # 24 hours
+
+# -----------------------------------------------------------
+# COST OPTIMIZATION SETTINGS
+# -----------------------------------------------------------
+cost_control:
+  azure:
+    adls_lifecycle:
+      hot_to_cool: 30
+      cool_to_archive: 90
+    postgres:
+      auto_pause: true
+      min_capacity: 0.5
+    openai:
+      response_cache: adls2
+      max_tokens: 4000
+      
+  vercel:
+    edge_cache:
+      supabase_queries: 600  # 10 minutes
+
+# -----------------------------------------------------------
+# PRODUCTION MONITORING (Azure-native)
+# -----------------------------------------------------------
+monitoring:
+  azure:
+    application_insights: true
+    log_analytics_workspace: scout-logs
+    alerts:
+      - metric: adls_latency
+        threshold: ">500ms"
+      - metric: postgres_connections
+        threshold: ">80%"
+      - metric: openai_cost
+        threshold: ">100 USD/day"
+
+# -----------------------------------------------------------
+# DISASTER RECOVERY CONFIG
+# -----------------------------------------------------------
+recovery:
+  adls_replication:
+    target_region: eastus
+    frequency: 15m
+  postgres_backup:
+    frequency: hourly
+    retention: 14d
+    adls_target: "backups/postgres"

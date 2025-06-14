@@ -1,0 +1,129 @@
+{
+  "title": "Scout Analytics Production Monitoring",
+  "refreshInterval": 30,
+  "timeRange": "1h",
+  "panels": [
+    {
+      "id": "overview-stats",
+      "title": "System Overview",
+      "type": "stat",
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 3},
+      "targets": [
+        {
+          "expr": "scout:requests_total",
+          "legend": "Requests"
+        },
+        {
+          "expr": "scout:error_rate",
+          "legend": "Error Rate",
+          "thresholds": [0.01, 0.05]
+        },
+        {
+          "expr": "scout:response_time_p95",
+          "legend": "P95 Response",
+          "unit": "ms"
+        }
+      ]
+    },
+    {
+      "id": "ai-performance",
+      "title": "AI Service Metrics",
+      "type": "timeseries",
+      "gridPos": {"x": 0, "y": 3, "w": 8, "h": 6},
+      "targets": [
+        {
+          "expr": "scout:ai_response_time",
+          "legend": "Response Time"
+        },
+        {
+          "expr": "scout:ai_token_usage",
+          "legend": "Token Usage"
+        },
+        {
+          "expr": "scout:ai_accuracy",
+          "legend": "Accuracy"
+        }
+      ]
+    },
+    {
+      "id": "data-health",
+      "title": "Data Pipeline Health",
+      "type": "gauge",
+      "gridPos": {"x": 8, "y": 3, "w": 4, "h": 6},
+      "targets": [
+        {
+          "expr": "scout:data_freshness_seconds",
+          "legend": "Data Freshness",
+          "unit": "s",
+          "max": 300
+        }
+      ]
+    },
+    {
+      "id": "resource-usage",
+      "title": "Resource Utilization",
+      "type": "bargauge",
+      "gridPos": {"x": 0, "y": 9, "w": 6, "h": 6},
+      "targets": [
+        {
+          "expr": "scout:cpu_usage",
+          "legend": "CPU"
+        },
+        {
+          "expr": "scout:memory_usage",
+          "legend": "Memory"
+        },
+        {
+          "expr": "scout:db_connections",
+          "legend": "DB Connections"
+        }
+      ]
+    },
+    {
+      "id": "component-health",
+      "title": "Component Performance",
+      "type": "heatmap",
+      "gridPos": {"x": 6, "y": 9, "w": 6, "h": 6},
+      "targets": [
+        {
+          "expr": "scout:component_load_time{component!=''}",
+          "legend": "Load Time"
+        }
+      ]
+    },
+    {
+      "id": "ai-recommendations",
+      "title": "AI Optimization Suggestions",
+      "type": "table",
+      "gridPos": {"x": 0, "y": 15, "w": 12, "h": 6},
+      "columns": [
+        {"text": "Component", "type": "string"},
+        {"text": "Metric", "type": "string"},
+        {"text": "Current", "type": "number"},
+        {"text": "Target", "type": "number"},
+        {"text": "Action", "type": "string"}
+      ],
+      "targets": [
+        {
+          "expr": "scout:ai_optimization_suggestions"
+        }
+      ]
+    }
+  ],
+  "aiAssistant": {
+    "enabled": true,
+    "prompt": "You are Scout Analytics production monitoring assistant. Analyze metrics and provide optimization recommendations.",
+    "actions": [
+      {
+        "name": "scale_resources",
+        "description": "Adjust compute resources",
+        "params": ["component", "scale_factor"]
+      },
+      {
+        "name": "rollback_deployment",
+        "description": "Revert to previous version",
+        "params": ["version"]
+      }
+    ]
+  }
+} 
