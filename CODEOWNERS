@@ -1,0 +1,21 @@
+# Global ownership
+* @jgtolentino
+
+# Apps ownership
+/apps/dashboard/ @jgtolentino
+/apps/retailbot-api/ @jgtolentino
+/apps/data-pipeline/ @jgtolentino
+
+# Packages ownership
+/packages/design-system/ @jgtolentino
+/packages/ai-core/ @jgtolentino
+/packages/data-models/ @jgtolentino
+
+# Infrastructure ownership
+/infrastructure/ @jgtolentino
+
+# Configuration files
+/specs/ @jgtolentino
+/.github/ @jgtolentino
+/package.json @jgtolentino
+/README.md @jgtolentino
