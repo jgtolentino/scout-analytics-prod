@@ -1,0 +1,11 @@
+tests:
+  - name: "Dashboard snapshot regression"
+    type: snapshot
+    config:
+      component: DashboardOverview
+      threshold: 0.01
+  - name: "Transaction count consistency"
+    type: sql-validation
+    config:
+      script: scripts/verify_transaction_counts.sh
+      description: "Ensure total transactions in DB matches the dashboard metric"
