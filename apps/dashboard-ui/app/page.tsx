@@ -1,6 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import CollapsibleSection from '../src/components/dashboard/CollapsibleSection'
+import InteractiveTutorialCard from '../src/components/dashboard/InteractiveTutorialCard'
+import TransactionTrendsCard from '../src/components/dashboard/TransactionTrendsCard'
+import ProductMixCard from '../src/components/dashboard/ProductMixCard'
+import ConsumerBehaviorCard from '../src/components/dashboard/ConsumerBehaviorCard'
+import ConsumerProfilingCard from '../src/components/dashboard/ConsumerProfilingCard'
 
 interface ExecutiveMetrics {
   revenue_today: number
@@ -55,98 +61,27 @@ export default function DashboardPage() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <span className="text-2xl">💰</span>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Today's Revenue
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      ₱{metrics?.revenue_today?.toLocaleString() || '0'}
-                    </dd>
-                    <dd className="text-sm text-green-600">
-                      +{metrics?.revenue_growth_dod_percent}% from yesterday
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <span className="text-2xl">🛒</span>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Transactions
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {metrics?.total_transactions_today?.toLocaleString() || '0'}
-                    </dd>
-                    <dd className="text-sm text-gray-500">
-                      Customer interactions today
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <span className="text-2xl">📈</span>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      TBWA Market Share
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {metrics?.tbwa_market_share_percent?.toFixed(1) || '0'}%
-                    </dd>
-                    <dd className="text-sm text-gray-500">
-                      Across Philippine regions
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <span className="text-2xl">🟢</span>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      System Health
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {metrics?.system_health_score || 99}%
-                    </dd>
-                    <dd className="text-sm text-gray-500">
-                      Uptime this month
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Overview Sections with Collapsible Cards - Aligned with Keynote Slide */}
+        <div className="space-y-6 mb-8">
+          <CollapsibleSection title="Transaction Trends" defaultOpen={true}>
+            <TransactionTrendsCard />
+          </CollapsibleSection>
+          
+          <CollapsibleSection title="Product Mix & SKU Info" defaultOpen={true}>
+            <ProductMixCard />
+          </CollapsibleSection>
+          
+          <CollapsibleSection title="Consumer Behavior & Preference Signals" defaultOpen={true}>
+            <ConsumerBehaviorCard />
+          </CollapsibleSection>
+          
+          <CollapsibleSection title="Consumer Profiling" defaultOpen={true}>
+            <ConsumerProfilingCard />
+          </CollapsibleSection>
+          
+          <CollapsibleSection title="Interactive Tutorial" defaultOpen={false}>
+            <InteractiveTutorialCard />
+          </CollapsibleSection>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
